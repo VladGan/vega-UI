@@ -22,41 +22,38 @@ const DonutChart: React.FC<DonutChartProps> = ({ viewBy, assetsData, portfolioDa
   const [chartData, setChartData] = useState<AssetData[]>([]);
 
   useEffect(() => {
-    const fetchPositions = () => {
-      const processedData: any = [];
-      assetsData.forEach(asset => {
-        const processedDataEntry = {
-          type: asset.type,
-          name: asset.name,
-          value: 0
-        };
-        processedData.push(processedDataEntry);
-      })
+    const processedData: any = [];
+    assetsData.forEach(asset => {
+      const processedDataEntry = {
+        type: asset.type,
+        name: asset.name,
+        value: 0
+      };
+      processedData.push(processedDataEntry);
+    })
 
-      portfolioData.positions.forEach(position => {
-        const assetID = position.asset;
-        let name = assetsData.find(asset => asset.id === assetID)?.name;
-        processedData.find((entry: any) => entry.name === name).value += position.quantity * position.price;
-      })
+    portfolioData.positions.forEach(position => {
+      const assetID = position.asset;
+      let name = assetsData.find(asset => asset.id === assetID)?.name;
+      processedData.find((entry: any) => entry.name === name).value += position.quantity * position.price;
+    })
 
-      const dataByAsset = processedData.map((entry: any, index: number) => ({
-        name: entry.name || `Asset ${index + 1}`,
-        value: entry.value, // Assuming API provides quantity and price per asset
-        color: COLORS[index % COLORS.length]
-      }));
+    const dataByAsset = processedData.map((entry: any, index: number) => ({
+      name: entry.name || `Asset ${index + 1}`,
+      value: entry.value, // Assuming API provides quantity and price per asset
+      color: COLORS[index % COLORS.length]
+    }));
 
-      const dataByAssetClass = Object.values(
-        dataByAsset.reduce((acc: any, asset: AssetData) => {
-          const assetClass = assetsData.find((a: any) => a.name === asset.name)?.type || 'Other';
-          acc[assetClass] = acc[assetClass] || { name: assetClass, value: 0, color: asset.color };
-          acc[assetClass].value += asset.value;
-          return acc;
-        }, {})
-      );
+    const dataByAssetClass = Object.values(
+      dataByAsset.reduce((acc: any, asset: AssetData) => {
+        const assetClass = assetsData.find((a: any) => a.name === asset.name)?.type || 'Other';
+        acc[assetClass] = acc[assetClass] || { name: assetClass, value: 0, color: asset.color };
+        acc[assetClass].value += asset.value;
+        return acc;
+      }, {})
+    );
 
-      setChartData(viewBy === 'asset' ? dataByAsset : dataByAssetClass as AssetData[]);
-    };
-    fetchPositions();
+    setChartData(viewBy === 'asset' ? dataByAsset : dataByAssetClass as AssetData[]);
   }, [viewBy, assetsData, portfolioData]);
 
   return (

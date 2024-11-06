@@ -34,36 +34,34 @@ const HistoricalChart: React.FC<HistoricalChartProps> = () => {
   useEffect(() => {
     const fetchHistoricalData = async () => {
       const { from, to }: {from: string, to: string} = getDateRange();
-
-      let currentDate = from;
-      let portfolios = [];
-      do {
-        const portfolio = await getPortfolio(currentDate);
-        portfolios.push(portfolio);
-        let date = new Date(currentDate);
-        date.setDate( date.getDate() + 1);
-        currentDate = date.toISOString().split('T')[0]
-      } while (currentDate !== to)
       try {
+        let currentDate = from;
+        const portfolios = [];
+        do {
+          const portfolio = await getPortfolio(currentDate);
+          portfolios.push(portfolio);
+          let date = new Date(currentDate);
+          date.setDate( date.getDate() + 1);
+          currentDate = date.toISOString().split('T')[0]
+        } while (currentDate !== to)
+
+        let min = Number.MAX_VALUE;
+        let max = Number.MIN_VALUE;
+
         const processedData = portfolios
           .map((portfolio: Portfolio) => {
             let value = 0;
             portfolio.positions.forEach(position => value+=position.price * position.quantity);
+            min = Math.min(value, min);
+            max = Math.max(value, max);
             return {
               date: convertDateToShort(portfolio.asOf),
               value: value
             }
         });
 
-        let min = processedData[0].value;
-        let max = processedData[0].value;
-        processedData.forEach(entry => {
-          min = Math.min(entry.value, min);
-          max = Math.max(entry.value, max);
-        })
-
         min = min * 0.9; min -= min % 1000;
-        max = max * 1.1; max += 1000 - max % 1000;
+        max = max * 1.1; max += (1000 - max % 1000);
 
         setChartBoundaries({min, max})
         setHistoricalData(processedData);
@@ -97,7 +95,7 @@ const HistoricalChart: React.FC<HistoricalChartProps> = () => {
                  label={{
                    value: 'Date',
                    position: 'insideMiddle',
-                   dy: 50,
+                   dy: 60,
                    style: { textAnchor: 'middle', fontSize: 14 }
                  }}
           />

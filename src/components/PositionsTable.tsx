@@ -11,25 +11,22 @@ const PositionsTable : React.FC<PositionTableProps> = ({ assetsData, portfolioDa
   const [processedData, setProcessedData] = useState<any>([]);
 
   useEffect(() => {
-    const fetchPositions = async () => {
-      const processedData: any = [];
-      assetsData.forEach(asset => {
-        const processedDataEntry = {
-          type: asset.type,
-          name: asset.name,
-          value: 0
-        };
-        processedData.push(processedDataEntry);
-      })
+    const processedData: any = [];
+    assetsData.forEach(asset => {
+      const processedDataEntry = {
+        type: asset.type,
+        name: asset.name,
+        value: 0
+      };
+      processedData.push(processedDataEntry);
+    })
 
-      portfolioData.positions.forEach(position => {
-        const assetID = position.asset;
-        let name = assetsData.find(asset => asset.id === assetID)?.name;
-        processedData.find((entry: any) => entry.name === name).value += position.quantity * position.price;
-      })
-      setProcessedData(processedData);
-    };
-    fetchPositions();
+    portfolioData.positions.forEach(position => {
+      const assetID = position.asset;
+      let name = assetsData.find(asset => asset.id === assetID)?.name;
+      processedData.find((entry: any) => entry.name === name).value += position.quantity * position.price;
+    })
+    setProcessedData(processedData);
   }, []);
 
   return (
