@@ -6,26 +6,31 @@ import DonutChart from '../components/DonutChart';
 import PositionsTable from '../components/PositionsTable';
 import HistoricalChart from '../components/HistoricalChart';
 import ErrorBoundary from '../components/ErrorBoundary';
-import { getPortfolio } from '../api/assetsApi.ts';
+import {getAssets, getPortfolio} from '../api/assetsApi.ts';
 import { logout } from '../utils/auth';
-import { Portfolio } from '../api/apiInterface.ts'
+import {Asset, Portfolio} from '../api/apiInterface.ts'
 
 const PortfolioPage = () => {
   const navigate = useNavigate();
   const [portfolioData, setPortfolioData] = useState<Portfolio>();
+  const [assetsData, setAssetsData] = useState<Asset[]>();
+
   const [viewBy, setViewBy] = useState<'asset' | 'assetClass'>('asset');
-  const [timePeriod, setTimePeriod] = useState('1Y'); // Example time periods: '1M', '6M', '1Y'
+  // const [timePeriod, setTimePeriod] = useState('1Y'); // Example time periods: '1M', '6M', '1Y'
+  // todo add readme about timeline
   const [error, setError] = useState('');
+
 
   // Fetch portfolio data on component mount
   useEffect(() => {
     const fetchPortfolio = async () => {
       try {
         const portfolio = await getPortfolio();
+        const assets = await getAssets();
         setPortfolioData(portfolio);
-        console.log(portfolioData);
+        setAssetsData(assets);
       } catch (err) {
-        setError('Failed to load portfolio data');
+        setError('Failed to load data');
       }
     };
     fetchPortfolio();
@@ -40,17 +45,13 @@ const PortfolioPage = () => {
     setViewBy(newView);
   };
 
-  const handleTimePeriodChange = (newTimePeriod: string) => {
-    setTimePeriod(newTimePeriod);
-  };
-
   if (error) {
     return <div className="text-red-500">{error}</div>;
   }
 
   return (
     <ErrorBoundary>
-      <div className="p-8 bg-gray-100 min-h-screen">
+      <div className="w-full p-8 bg-gray-100 min-h-screen">
         <div className="flex justify-between items-center mb-6">
           <h1 className="text-3xl font-bold">Portfolio</h1>
           <button
@@ -77,36 +78,49 @@ const PortfolioPage = () => {
             </button>
           </div>
 
-          <select
-            value={timePeriod}
-            onChange={(e) => handleTimePeriodChange(e.target.value)}
-            className="py-2 px-4 border border-gray-300 rounded"
-          >
-            <option value="1M">1 Month</option>
-            <option value="6M">6 Months</option>
-            <option value="1Y">1 Year</option>
-            <option value="5Y">5 Years</option>
-          </select>
+          {/*<select*/}
+          {/*  value={timePeriod}*/}
+          {/*  onChange={(e) => handleTimePeriodChange(e.target.value)}*/}
+          {/*  className="py-2 px-4 border border-gray-300 rounded"*/}
+          {/*>*/}
+          {/*  <option value="1M">1 Month</option>*/}
+          {/*  <option value="6M">6 Months</option>*/}
+          {/*  <option value="1Y">1 Year</option>*/}
+          {/*  <option value="5Y">5 Years</option>*/}
+          {/*</select>*/}
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {/* Donut Chart */}
           <div className="bg-white p-6 rounded shadow">
             <h2 className="text-xl font-semibold mb-4">Portfolio Balance</h2>
-            <DonutChart viewBy={viewBy}/>
+            {
+              assetsData && portfolioData &&
+              <DonutChart
+                viewBy={viewBy}
+                assetsData={assetsData}
+                portfolioData={portfolioData}/>
+            }
           </div>
 
           {/* Positions Table */}
           <div className="bg-white p-6 rounded shadow">
             <h2 className="text-xl font-semibold mb-4">Positions</h2>
-            <PositionsTable/>
+            {
+              assetsData && portfolioData &&
+              <PositionsTable
+                assetsData={assetsData}
+                portfolioData={portfolioData}
+              />
+            }
           </div>
         </div>
 
         {/* Historical Chart */}
         <div className="bg-white p-6 rounded shadow mt-6">
           <h2 className="text-xl font-semibold mb-4">Historical Performance</h2>
-          <HistoricalChart timePeriod={timePeriod}/>
+          {/*<HistoricalChart timePeriod={timePeriod}/>*/}
+          <HistoricalChart/>
         </div>
       </div>
     </ErrorBoundary>

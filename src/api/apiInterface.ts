@@ -22,7 +22,7 @@ export interface Price {
   id: string; // UUID
   asset: string;
   price: number; // int32
-  timestamp: string; // Date-Time string //todo describe in readme
+  timestamp: number; // Date-Time string //todo describe in readme
 }
 
 export interface Asset {
