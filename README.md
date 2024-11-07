@@ -33,6 +33,7 @@ Go to `http://localhost:5173/portfolio`
  - move data processing from inside components (DonutChart, HistoricalChart, PositionsTable) to PortfolioPage, so PortfolioPage will act like a 'smart' component and its children will be 'dumb' and more agnostic to the context of the data therefore more reusable
  - update 'portfolio' api so it also allows queries with time range
  - once the API changes are done, add time range selection to HistoricalChart. I had it but as I described above I realized that it will make a lot of qeries for large range of time
+ - add more comments to explain some non obvious parts of the code
 
 Some work that can be potentially done:
 - tests
