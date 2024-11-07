@@ -49,6 +49,7 @@ Go to `http://localhost:5173/portfolio`
 Some work that can be potentially done in real life project:
 - tests
 - add more styling, make the UI follow certain theme, follow figma (or what is beimng used) designs / mockups
+- have a better separation between error handling functions and components, 'smart' components for data processing / queries, 'dumb' reusable components to render given data 
 - display more / different data on hover / click in charts
 - authentication on the server side
 - loading animations
