@@ -7,6 +7,8 @@ npm run dev
 ```
 Go to `http://localhost:5173/portfolio`
 
+<img width="1406" alt="Screenshot 2024-11-07 at 13 50 24" src="https://github.com/user-attachments/assets/1d187130-7f47-48e9-b728-24a507ebe1d0">
+
 ### Project structure
 * api
 
