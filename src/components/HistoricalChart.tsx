@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { LineChart, Line, XAxis, YAxis, Tooltip, CartesianGrid, ResponsiveContainer } from 'recharts';
 import { getPortfolio } from '../api/assetsApi.ts';
 import { Portfolio } from "../api/apiInterface.ts";
+import ErrorPage from "../pages/ErrorPage.tsx";
 
 interface HistoricalChartProps {
   // timePeriod: string; // e.g., '1M', '6M', '1Y', '5Y'
@@ -12,7 +13,7 @@ interface HistoricalChartProps {
 const HistoricalChart: React.FC<HistoricalChartProps> = () => {
   const [historicalData, setHistoricalData] = useState<{date:string, value: number}[]>([]);
   const [chartBoundaries, setChartBoundaries] = useState<{min:number, max: number}>();
-  const [error, setError] = useState('');
+  const [error, setError] = useState<{title: string, native: any}>();
 
   const convertDateToShort = (dateString: string) => {
     const date = new Date(dateString);
@@ -66,22 +67,28 @@ const HistoricalChart: React.FC<HistoricalChartProps> = () => {
         setChartBoundaries({min, max})
         setHistoricalData(processedData);
       } catch (err) {
-        setError('Failed to load historical data');
+        setError({
+          title: 'Failed to load data',
+          native: err
+        });
       }
     };
     fetchHistoricalData();
   }, []);
 
   if (error) {
-    return <div className="text-red-500">{error}</div>;
+    return <ErrorPage
+      statusCode={error.native.status}
+      title={error.title}
+      message={error.native.message}
+    />
   }
 
   return (
     <div>
       <ResponsiveContainer width="100%" height={400}>
         <LineChart data={historicalData}
-                   margin={{ top: 10, right: 30, left: 0, bottom: 70 }}
-                   >
+                   margin={{ top: 10, right: 30, left: 0, bottom: 70 }}>
           <CartesianGrid strokeDasharray="3 3" />
           <XAxis dataKey="date"
                  tick={{

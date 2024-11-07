@@ -27,10 +27,6 @@ export const getPrices = async (assets: string[], {
 
 // src/api/portfolioApi.ts
 export const getPortfolio = async (asOf?: string): Promise<Portfolio> => {
-  try {
-    const response = await axios.get('http://localhost:3000/portfolios', { params: { asOf } });
-    return response.data;
-  } catch (error) {
-    throw new Error('Error fetching portfolio');
-  }
+  const response = await axios.get('http://localhost:3000/portfolios', { params: { asOf } });
+  return response.data;
 };

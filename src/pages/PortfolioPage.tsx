@@ -9,6 +9,7 @@ import ErrorBoundary from '../components/ErrorBoundary';
 import {getAssets, getPortfolio} from '../api/assetsApi.ts';
 import { logout } from '../utils/auth';
 import {Asset, Portfolio} from '../api/apiInterface.ts'
+import ErrorPage from "./ErrorPage.tsx";
 
 const PortfolioPage = () => {
   const navigate = useNavigate();
@@ -18,7 +19,7 @@ const PortfolioPage = () => {
   const [viewBy, setViewBy] = useState<'asset' | 'assetClass'>('asset');
   // const [timePeriod, setTimePeriod] = useState('1Y'); // Example time periods: '1M', '6M', '1Y'
   // todo add readme about timeline
-  const [error, setError] = useState('');
+  const [error, setError] = useState<{title: string, native: any}>();
 
 
   // Fetch portfolio data on component mount
@@ -29,8 +30,11 @@ const PortfolioPage = () => {
         const assets = await getAssets();
         setPortfolioData(portfolio);
         setAssetsData(assets);
-      } catch (err) {
-        setError('Failed to load data');
+      } catch (err: any) {
+        setError({
+          title: 'Failed to load data',
+          native: err
+        });
       }
     };
     fetchPortfolio();
@@ -46,7 +50,11 @@ const PortfolioPage = () => {
   };
 
   if (error) {
-    return <div className="text-red-500">{error}</div>;
+    return <ErrorPage
+      statusCode={error.native.status}
+      title={error.title}
+      message={error.native.message}
+    />
   }
 
   return (
