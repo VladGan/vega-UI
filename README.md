@@ -42,5 +42,7 @@ Some work that can be potentially done:
 - display more / different data on hover / click in charts
 - authentication on the server side
 - day / night mode
+- responsive design (small screens, etc)
+- tests with different browsers, accessibility features
 
   
